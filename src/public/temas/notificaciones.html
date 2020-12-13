@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <title>Notificaciones</title>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/"><img src="../img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <a class="info" href="../index.html">REGRESAR A PÁGINA PRINCIPAL</a>
+            </ul>
+    </header>
+    <br>
+    <h1>Notificaciones</h1>
+    <br>
+    <br>
+    <button onclick="mostrarNotificaciones()" class="boton">Probar notificaciones</button>
+    <p id="txtMensaje"></p>
+
+    <script>
+        function mostrarNotificaciones(){
+            var txtMensaje=document.getElementById("txtMensaje");
+            if(!window.Notification){
+                txtMensaje.innerHTML="Visitanos en otro navegador";
+            }
+            Notification.requestPermission(function (status) { 
+             if(Notification.permission !==status){
+                 Notification.permission=status;
+             }
+
+             if(Notification.permission=="granted"){
+                 var n=new Notification("Demo Notificación",{
+                     body:"Esta es una demostración",
+                     icon:"https://warrenlamb.net/wp-content/uploads/2018/05/0197.gif",
+                     vibrate:[200,300],
+                     data:"any",
+                 }
+                 
+
+                 );
+                 n.onclick=(args)=>{
+                   alert("click")  
+                  console.log(args.currentTarget.data);
+                    }
+             }else{
+                 txtMensaje.innerHTML="Nuestra aplicación no cuenta con tu permiso para mostrar notificaciones";
+             }
+             });
+        }
+    </script>
+</body>
+</html>

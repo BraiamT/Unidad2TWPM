@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <title>Web Sockets</title>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/"><img src="../img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <a class="info" href="../index.html">REGRESAR A PÁGINA PRINCIPAL</a>
+            </ul>
+    </header>
+    <br>
+    <h1>Web Sockets</h1>
+    <br>
+    <ul id="messages"></ul>
+    <br>
+    <form action="">
+        <input id="m" autocomplete="off" placeholder="Ingresa tu mensaje para enviarlo!" class="font-size" />
+        <button>Enviar</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+        $(function () {
+            let socket = io("https://chat-perron.herokuapp.com");
+
+            $("form").submit(function (e) {
+                e.preventDefault(); // prevents page reloading
+                socket.emit("msg", {
+                    msg: $("#m").val(),
+                    user: "Usuario",
+                });
+                $("#m").val("");
+                return false;
+            });
+            socket.on("msg", function (msg) {
+                $("#messages").append(
+                    $('<li class="font-size">').text(`${msg.user}: ${msg.msg}`)
+                );
+            });
+        });
+    </script>
+
+</body>
+</html>

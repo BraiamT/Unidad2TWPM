@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <title>Google Maps</title>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/"><img src="../img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <a class="info" href="../index.html">REGRESAR A PÁGINA PRINCIPAL</a>
+            </ul>
+    </header>
+    <br>
+    <h1>Ubicación en el Mapa</h1>
+    <br>
+    <button onclick="obtenerLocalizacion()">Mostrar mi ubicación en el mapa</button>
+    <p id="txtLocalizacion"></p>
+    <br>
+    <img id="map">
+    <script>
+        var txtLocalizacion = document.getElementById("txtLocalizacion");
+
+        function obtenerLocalizacion() {
+            if (!navigator.geolocation) {
+                txtLocalizacion.innerText = "Visitanos en otro navegador";
+            }
+            // Flujo normal
+            setInterval(() => {
+                navigator.geolocation.getCurrentPosition(mostrarPos, errorLoc);
+            }, 1000);
+        }
+
+        function mostrarPos(pos) {
+
+            var img_url = "https://maps.googleapis.com/maps/api/staticmap" +
+                "?center=" + pos.coords.latitude + "," + pos.coords.longitude +
+                "&zoom=14" +
+                "&size=1200x400" +
+                "&key=AIzaSyCv9VAsM4KzjDdvuV2CzFAMuazqOfqFlgM";
+
+            var map = document.getElementById("map");
+            map.setAttribute("src", img_url);
+        }
+
+        function errorLoc(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    txtLocalizacion.innerHTML = "No se concedieron los permisos necesarios";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    txtLocalizacion.innerHTML = "No se pudo acceder a la geolicalización";
+                    break;
+                case error.TIMEOUT:
+                    txtLocalizacion.innerHTML = "Tiempo de espera agotado";
+                case error.UKNOWN:
+                    txtLocalizacion.innerHTML = "Unknown";
+                default:
+                    txtLocalizacion.innerHTML = "Ha ocurrido un error";
+            }
+        }
+    </script>
+
+</body>
+</html>

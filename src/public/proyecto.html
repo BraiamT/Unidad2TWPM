@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Chat Perron | TWPM</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">VOLVER A INICIO</a>
+    </nav>
+
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <a href="nosotros.html">
+                <h3>Chat Perron | Braiam Tejeda - Jose Antonio - Luis Alejandro</h3>
+            </a>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">Usuarios Conectados:</h5>
+                    <div class="card-body">
+                        <ul class="list-group usuarios_activos">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <h5 class="card-header">Chat Perron | Segundos Activo: <output id="result"></output></h5>
+                    <div class="card-body chatBox" id="chatBox">
+                        <div class="row justify-content-start mb-2">
+                            <div class="col-md-12 userTyping">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="form-group row mt-3 form-mensajes">
+            <div class="col-7">
+                <input type="text" class="form-control txtMensaje" id="txtMensaje" placeholder="Escriba su mensaje">
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-info btn-block">Enviar</button>
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-secondary btn-block" onclick="getLocation()">Enviar Ubicación</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        //INICIO WORKER
+        $(document).ready(function () {
+            startWorker();
+        });
+        var w;
+        function startWorker() {
+            if (typeof (Worker) == "undefined") {
+                document.getElementById('result').innerText = "tu navegador no es compatible";
+                return;
+            }
+            if (typeof (w) !== "undefined") {
+                return;
+            }
+            w = new Worker("../js/worker-proyecto.js");
+            w.onmessage = function (event) {
+                document.getElementById("result").innerHTML = event.data;
+            }
+        }
+        function stopWorker() {
+
+            if (typeof (w) == "undefined") {
+                return;
+            }
+            w.terminate();
+            w = undefined;
+        }
+        //FIN WORKER
+
+        //INICIO NUEVAS CONEXIONES Y DESCONEXIONES
+        const inboxPeople = document.querySelector(".usuarios_activos");
+
+        let userName = "";
+
+        const newUserConnected = (user) => {
+            userName = user || `User${Math.floor(Math.random() * 1000000)}`;
+            socket.emit("new user", userName);
+            addToUsersBox(userName);
+        };
+
+        const addToUsersBox = (userName) => {
+            if (!!document.querySelector(`.${userName}-userlist`)) {
+                return;
+            }
+
+            const userBox = `
+    <div class="chat_ib ${userName}-userlist">
+        <li class="list-group-item text-success">${userName}</li>
+    </div>
+  `;
+            inboxPeople.innerHTML += userBox;
+        };
+
+        newUserConnected();
+
+        socket.on("new user", function (data) {
+            data.map((user) => addToUsersBox(user));
+        });
+
+        socket.on("user disconnected", function (userName) {
+            document.querySelector(`.${userName}-userlist`).remove();
+        });
+        //FIN NUEVAS CONEXIONES Y DESCONEXIONES
+
+        //INICIO MENSAJES NUEVOS PERRONES       
+        const inputField = document.querySelector(".txtMensaje");
+        const messageForm = document.querySelector(".form-mensajes");
+        const messageBox = document.querySelector(".chatBox");
+
+        const addNewMessage = ({ user, message }) => {
+            const time = new Date();
+            const formattedTime = time.toLocaleString("en-US", { hour: "numeric", minute: "numeric" });
+
+            const receivedMsg = `
+    <div class="row justify-content-start mb-2">
+        <div class="col-md-8">
+            <div class="card bg-secondary text-white text-center">
+                <blockquote class="blockquote">
+                    <p>${message}</p>
+                    <footer class="blockquote-footer text-white">
+                        <small class="text-white">
+                            Enviado por ${user} a las <cite title="Source Title">${formattedTime}</cite>
+                        </small>
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>`;
+
+            const myMsg = `
+    <div class="row justify-content-end mb-2">
+        <div class="col-md-8">
+            <div class="card bg-info text-white text-center">
+                <blockquote class="blockquote">
+                    <p>${message}</p>
+                    <footer class="blockquote-footer text-white">
+                        <small class="text-white">
+                            Enviado por ti a las <cite title="Source Title">${formattedTime}</cite>
+                        </small>
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>`;
+
+            messageBox.innerHTML += user === userName ? myMsg : receivedMsg;
+        };
+
+        messageForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (!inputField.value) {
+                return;
+            }
+
+            socket.emit("chat message", {
+                message: inputField.value,
+                nick: userName,
+            });
+
+            inputField.value = "";
+            mostrarNotificacion("Hey, te llegó un mensaje!!");
+        });
+
+        socket.on("chat message", function (data) {
+            addNewMessage({ user: data.nick, message: data.message });
+        });
+        //FIN MENSAJES NUEVOS PERRONES
+
+        //INICIO GEOLOCALIZACIÓN Y GOOGLE MAPS
+        function getLocation() {
+            if (!navigator.geolocation) {
+                textoChat("Tu navegador no es compatible");
+            }
+
+            navigator.geolocation.getCurrentPosition(mostrarPos, errorLoc);
+
+        }
+
+        function mostrarPos(pos) {
+            var texto = "Ubicación Actual:<br/>";
+            texto += "\nLatitud: " + pos.coords.latitude + "<br/>" + "Longitud: " + pos.coords.longitude + "<br/>";
+
+            var img_url = "https://maps.googleapis.com/maps/api/staticmap" +
+                "?center=" + pos.coords.latitude + "," + pos.coords.longitude +
+                "&zoom=14" +
+                "&size=300x200" +
+                "&key=AIzaSyCv9VAsM4KzjDdvuV2CzFAMuazqOfqFlgM";
+            texto += "<img src='" + img_url + "'>";
+
+            //socket.emit('chat message', texto);
+            //if (bandera = true) {
+            //    socket.on('chat message', function (msg) {
+            //        mostrarNotificacion("Nueva ubicacion perrona");
+            //        textoChat(msg);
+            //    });
+            //}
+            //bandera = false;
+            mostrarNotificacion("Nueva ubicacion perrona recibida");
+            socket.emit("chat message", {
+                message: texto,
+                nick: 'Google',
+            });
+        }
+
+        function errorLoc(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    textoChat("No tienes permisos de acceder a la Geolocalización");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    textoChat("No se pudo acceder a la localización");
+                    break;
+                case error.TIMEOUT:
+                    textoChat("El tiempo de respuesta para obtener la localización se agoto");
+                    break;
+                case error.UKNOWN_ERROR:
+                    textoChat("A ocurrudo un error");
+                default:
+                    textoChat("A ocurrudo un error");
+                    break;
+            }
+        }
+        //FIN GEOLOCALIZACIÓN Y GOOGLE MAPS
+
+        //INICIO NOTIFICACIONES
+        function mostrarNotificacion(msg) {
+            var txtMensaje = document.getElementById("txtMensaje");
+            if (!window.Notification) {
+                txtMensaje.innerText = "No es compatible tu navegador";
+            }
+            Notification.requestPermission(function (status) {
+                if (Notification.permission !== status) {
+                    Notification.permission = status;
+                }
+                if (Notification.permission == "granted") {
+                    var n = new Notification("Chat", {
+                        body: msg,
+                        icon: "https://i.pinimg.com/originals/56/96/3d/56963dd0ef0ce04f46f59bf4dab98eb6.png",
+                        image: "https://image.freepik.com/vector-gratis/grupo-gente-joven-abrazandose-diseno-plano_52683-13322.jpg",
+                        vibrate: [200, 100],
+                        data: { userId: 1235, mensaje: "Este es el mensaje" },
+
+                    });
+
+                    n.onclick = (args) => {
+                        alert("Se le dio click");
+                        console.log(args.currentTarget.data);
+                    }
+                } else {
+                    txtMensaje.innerText = "No tienes permiso para mandar notifiaciones";
+                }
+            });
+        }
+        //FIN NOTIFICACIONES
+
+        function textoChat(x) {
+            var msgLocation = `
+    <div class="row justify-content-center mb-2">
+        <div class="col-md-8">
+            <div class="card bg-warning text-white text-center">
+                <blockquote class="blockquote">
+                    <p>${x}</p>
+                </blockquote>
+            </div>
+        </div>
+    </div>`;
+            $('#chatBox').append(msgLocation);
+        }
+    </script>
+</body>
+
+</html>

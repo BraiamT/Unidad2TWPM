@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <title>Geolocalización</title>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/"><img src="../img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <a class="info" href="../index.html">REGRESAR A PÁGINA PRINCIPAL</a>
+            </ul>
+    </header>
+    <br>
+    <h1>Geolocalización</h1>
+    <br>
+    <button onclick="obtenerLocalizacion()" class="boton">Mostrar mis datos de geolocalización</button>
+    <br>
+    <br>
+    <p id="txtLocalizacion"></p>
+
+    <script>
+        var txtLocalizacion = document.getElementById("txtLocalizacion");
+
+        function obtenerLocalizacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarPos, err)
+            }
+        }
+        function err(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    txtLocalizacion.innerHTML = "No se concedieron los permisos necesarios";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    txtLocalizacion.innerHTML = "No se pudo acceder a la geolicalización";
+                    break;
+                case error.TIMEOUT:
+                    txtLocalizacion.innerHTML = "Tiempo de espera agotado";
+                case error.UKNOWN:
+                    txtLocalizacion.innerHTML = "Unknown";
+                default:
+                    txtLocalizacion.innerHTML = "Ha ocurrido un error";
+            }
+        }
+        function mostrarPos(pos) {
+            txtLocalizacion.innerHTML = "Latitud: " + pos.coords.latitude + "<br><br>"
+                + "Longitud: " + pos.coords.longitude;
+        }
+    </script>
+</body>
+</html>

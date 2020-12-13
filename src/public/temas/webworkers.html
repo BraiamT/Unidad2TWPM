@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <title>Web Workers</title>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/"><img src="../img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <a class="info" href="../index.html">REGRESAR A PÁGINA PRINCIPAL</a>
+            </ul>
+    </header>
+
+    <h1>Web Workers</h1>
+    <br>
+    <p>Contador de numeros: <output id="result"></output></p>
+    <br>
+    <button onclick="startWorker()">Iniciar worker</button>
+    <button onclick="stopWorker()">Detener worker</button>
+    <script>
+        var w;
+        function startWorker() {
+            if (typeof (Worker) == "undefined") {
+                document.getElementById('result').innerText = "tu navegador no es compatible";
+                return;
+            }
+            if (typeof (w) !== "undefined") {
+                return;
+            }
+            w = new Worker("../js/demo_workers.js");
+            w.onmessage = function (event) {
+                document.getElementById("result").innerHTML = event.data;
+            }
+
+        }
+        function stopWorker(){
+
+            if(typeof(w)=="undefined"){
+                return;
+            }
+            w.terminate();
+            w=undefined;
+        }
+    </script>
+</body>
+</html>

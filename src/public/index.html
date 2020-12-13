@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/slides.css">
+    <title>Página Principal</title>
+</head>
+<body>
+  <!--navbar-->
+    <header>
+        <a class="logo" href="/"><img src="img/logo.png" alt="logo"></a>
+        <nav>
+            <ul class="temas">
+                <li><a href="proyecto.html">PROYECTO</a></li>
+                <li><a href="temas/geolocalizacion.html">GEOLOCALIZACIÓN</a></li>
+                <li><a href="temas/webworkers.html">WEB WORKERS</a></li>
+                <li><a href="temas/websockets.html">WEB SOCKETS</a></li>
+                <li><a href="temas/mapas.html">GOOGLE MAPS</a></li>
+                <li><a href="temas/notificaciones.html">NOTIFICACIONES</a></li>
+            </ul>
+        </nav>
+        <a class="info" href="nosotros.html">NOSOTROS</a>
+    </header>
+
+    <!--CARRUSEL-->
+    <div class="container">
+      
+        <ul class="slider">
+          <li id="slide1" class="slides">
+            <h1>Geolocalización</h1>
+            <hr>
+            <br>
+            <h2>
+              Determina la ubicación física de un objeto o una persona 
+              con relación a un sistema de coordenadas (mapa) para, posteriormente, 
+              acceder a información específica.
+            </h2>
+            <br>
+            <h2>
+              Aplicaciones como Uber, Didi, Rappi o incluso Tinder, se sirven de esta
+              herramienta para tener mayor precisión en la ubicación de sus usuarios.
+            </h2>
+          </li>
+          <li id="slide2" class="slides">
+            <h1>Web Workers</h1>
+            <hr>
+            <br>
+            <h2>
+              Un Web Worker es un script que se ejecuta en segundo plano, 
+              sin afectar o bloquear el desempeño de nuestra página web.
+            </h2>
+            <br>
+            <h2>
+              Aunque que no todos los browsers soportan los workers, 
+              las versiones más recientes si lo hacen y son una excelente alternativa 
+              para lidiar con tareas pesadas que tengan 
+              que ejecutarse sin bloquear las páginas a la interacción con el usuario.
+            </h2>
+          </li>
+          <li id="slide3" class="slides">
+            <h1>Web Sockets</h1>
+            <hr>
+            <br>
+            <h2>
+              WebSockets es una tecnología avanzada que hace posible abrir una sesión 
+              de comunicación interactiva entre el navegador del usuario y un servidor.
+            </h2>
+            <br>
+            <h2>
+              Con esta  API, se pueden enviar mensajes a un servidor y  recibir  respuestas 
+              controladas por eventos sin tener que consultar al servidor para una respuesta.
+            </h2>
+          </li>
+          <li id="slide4" class="slides">
+            <h1>Google Maps</h1>
+            <hr>
+            <br>
+            <h2>
+              Esta API, proporcionada por Google, permite a los usuarios mostrar un mapa de nuestra 
+              ubicación en tiempo real, utilizando los datos de geolocalización para una mayor 
+              exactitud.
+            </h2>
+            <br>
+            <h2>
+              Se puede aplicar en sitios web que requieran mostrar su ubicación, o en aplicaciones que
+              busquen mostrar la ubicación, como WhatsApp y Facebook.
+            </h2>
+          </li>
+          <li id="slide5" class="slides">
+            <h1>Notificaciones</h1>
+            <hr>
+            <br>
+            <h2>
+              Las notificaciones push son mensajes instantáneos enviados por una aplicación o sitio web, 
+              en respuesta a un evento o proceso determinado que tiene lugar en la aplicación o página web. 
+            </h2>
+            <br>
+            <h2>
+              Un claro ejemplo de estas notificaciones vienen de WhatsApp Web, que muestra una notificación cada
+              que se recibe un mensaje.
+            </h2>
+          </li>
+        </ul>
+        
+        <ul class="menu2">
+        <li class="slides">
+            <a id="a" href="#slide1"></a>
+        </li >
+        <li class="slides">
+            <a id="a" href="#slide2"></a>
+        </li>
+        <li class="slides">
+            <a id="a" href="#slide3"></a>
+        </li>
+        <li class="slides">
+            <a id="a" href="#slide4"></a>
+        </li >
+        <li class="slides">
+            <a id="a" href="#slide5"></a>
+        </li >
+        </ul>
+        
+      </div>
+</body>
+</html>
